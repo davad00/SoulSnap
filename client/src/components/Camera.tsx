@@ -1,6 +1,4 @@
 import { useEffect, useRef, forwardRef, useImperativeHandle, useState } from 'react';
-import { SelfieSegmentation } from '@mediapipe/selfie_segmentation';
-import { Camera as MediaPipeCamera } from '@mediapipe/camera_utils';
 import './Camera.css';
 
 interface CameraProps {
@@ -60,7 +58,34 @@ const Camera = forwardRef(({ userId, isLocal }: CameraProps, ref) => {
     if (!videoRef.current || !canvasRef.current) return;
 
     try {
-      const selfieSegmentation = new (SelfieSegmentation as any)({
+      // Load MediaPipe from CDN
+      const script1 = document.createElement('script');
+      script1.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js';
+      script1.crossOrigin = 'anonymous';
+      
+      const script2 = document.createElement('script');
+      script2.src = 'https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js';
+      script2.crossOrigin = 'anonymous';
+
+      document.head.appendChild(script1);
+      document.head.appendChild(script2);
+
+      await new Promise((resolve) => {
+        script2.onload = resolve;
+      });
+
+      // Wait a bit for scripts to initialize
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Access MediaPipe from window object
+      const SelfieSegmentationClass = (window as any).SelfieSegmentation;
+      const CameraClass = (window as any).Camera;
+
+      if (!SelfieSegmentationClass || !CameraClass) {
+        throw new Error('MediaPipe libraries not loaded');
+      }
+
+      const selfieSegmentation = new SelfieSegmentationClass({
         locateFile: (file: string) => {
           return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
         }
@@ -74,7 +99,7 @@ const Camera = forwardRef(({ userId, isLocal }: CameraProps, ref) => {
       selfieSegmentation.onResults(onResults);
       selfieSegmentationRef.current = selfieSegmentation;
 
-      const camera = new (MediaPipeCamera as any)(videoRef.current, {
+      const camera = new CameraClass(videoRef.current, {
         onFrame: async () => {
           if (videoRef.current && selfieSegmentationRef.current) {
             await selfieSegmentationRef.current.send({ image: videoRef.current });
