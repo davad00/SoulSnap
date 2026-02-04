@@ -270,7 +270,7 @@ function Room({ roomId }: RoomProps) {
   };
 
   if (editMode && capturedFrames.length > 0) {
-    return <Editor frames={capturedFrames} onBack={handleBackToRoom} />;
+    return <Editor frames={capturedFrames} onBack={handleBackToRoom} socket={socket} roomId={roomId} />;
   }
 
   return (

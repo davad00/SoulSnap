@@ -66,6 +66,11 @@ io.on('connection', (socket) => {
     io.to(to).emit('signal', { from: socket.id, signal });
   });
 
+  socket.on('layer-update', ({ roomId, layers }) => {
+    socket.to(roomId).emit('layer-update', { layers });
+    console.log(`Layer update in room ${roomId}`);
+  });
+
   socket.on('capture-trigger', (roomId: string) => {
     io.to(roomId).emit('capture-now', { timestamp: Date.now() });
     console.log(`Capture triggered in room ${roomId}`);
