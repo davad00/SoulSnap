@@ -66,9 +66,14 @@ io.on('connection', (socket) => {
     io.to(to).emit('signal', { from: socket.id, signal });
   });
 
-  socket.on('layer-update', ({ roomId, layers }) => {
-    socket.to(roomId).emit('layer-update', { layers });
-    console.log(`Layer update in room ${roomId}`);
+  socket.on('layer-update', ({ roomId, layers, senderId }) => {
+    socket.to(roomId).emit('layer-update', { layers, senderId });
+    console.log(`Layer update in room ${roomId} from ${senderId}`);
+  });
+
+  socket.on('background-update', ({ roomId, background, backgroundImage, blur }) => {
+    socket.to(roomId).emit('background-update', { background, backgroundImage, blur });
+    console.log(`Background update in room ${roomId}`);
   });
 
   socket.on('capture-trigger', (roomId: string) => {
