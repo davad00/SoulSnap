@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --host",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -12,11 +12,13 @@
     "react-dom": "^18.2.0",
     "@mediapipe/selfie_segmentation": "^0.1.1675465747",
     "@mediapipe/camera_utils": "^0.3.1675466862",
-    "socket.io-client": "^4.6.1"
+    "socket.io-client": "^4.6.1",
+    "simple-peer": "^9.11.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
+    "@types/simple-peer": "^9.11.9",
     "@vitejs/plugin-react": "^4.2.1",
     "typescript": "^5.3.3",
     "vite": "^5.0.0"

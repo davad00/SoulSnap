@@ -117,7 +117,7 @@ function Room({ roomId }: RoomProps) {
             userId,
             imageData,
             foreground: imageData,
-            depthMap: null
+            depthMap: undefined
           };
           
           setCapturedFrames([frame]);
@@ -294,7 +294,9 @@ function Room({ roomId }: RoomProps) {
 
       <div className="camera-grid">
         <div className="composite-view">
-          <Camera ref={cameraRef} userId={userId} isLocal={true} style={{ display: 'none' }} />
+          <div style={{ display: 'none' }}>
+            <Camera ref={cameraRef} userId={userId} isLocal={true} />
+          </div>
           <canvas 
             ref={compositeCanvasRef}
             width={640}
