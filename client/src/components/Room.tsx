@@ -294,16 +294,19 @@ function Room({ roomId }: RoomProps) {
 
       <div className="camera-grid">
         <div className="composite-view">
-          <div style={{ display: 'none' }}>
-            <Camera ref={cameraRef} userId={userId} isLocal={true} />
-          </div>
+          <Camera ref={cameraRef} userId={userId} isLocal={true} />
           <canvas 
             ref={compositeCanvasRef}
             width={640}
             height={480}
             style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
               width: '100%',
               height: '100%',
+              pointerEvents: 'none',
+              zIndex: 10
             }}
           />
         </div>

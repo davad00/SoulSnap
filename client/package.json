@@ -11,7 +11,10 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "socket.io-client": "^4.6.1",
-    "simple-peer": "^9.11.1"
+    "simple-peer": "^9.11.1",
+    "events": "^3.3.0",
+    "process": "^0.11.10",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
