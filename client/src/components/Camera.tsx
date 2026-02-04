@@ -99,14 +99,23 @@ const Camera = forwardRef(({ userId, isLocal }: CameraProps, ref) => {
       selfieSegmentation.onResults(onResults);
       selfieSegmentationRef.current = selfieSegmentation;
 
+      // Get camera constraints - prefer higher resolution for better quality
+      const constraints = {
+        video: {
+          deviceId: selectedDevice ? { exact: selectedDevice } : undefined,
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+          facingMode: 'user'
+        }
+      };
+
       const camera = new CameraClass(videoRef.current, {
         onFrame: async () => {
           if (videoRef.current && selfieSegmentationRef.current) {
             await selfieSegmentationRef.current.send({ image: videoRef.current });
           }
         },
-        width: 640,
-        height: 480
+        ...constraints
       });
 
       camera.start();
@@ -211,7 +220,8 @@ const Camera = forwardRef(({ userId, isLocal }: CameraProps, ref) => {
         style={{ 
           width: '100%',
           height: '100%',
-          objectFit: 'contain'
+          objectFit: 'contain',
+          transform: isLocal ? 'scaleX(-1)' : 'none'
         }}
       />
       

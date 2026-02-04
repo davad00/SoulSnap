@@ -122,8 +122,8 @@ function Room({ roomId }: RoomProps) {
         remoteVideosRef.current.forEach((video, peerId) => {
           if (video.readyState >= 2) {
             const canvas = document.createElement('canvas');
-            canvas.width = 640;
-            canvas.height = 480;
+            canvas.width = video.videoWidth || 1280;
+            canvas.height = video.videoHeight || 720;
             const ctx = canvas.getContext('2d')!;
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -244,20 +244,24 @@ function Room({ roomId }: RoomProps) {
     });
 
     const drawComposite = () => {
+      // Get local canvas dimensions
+      const localCanvas = cameraRef.current?.getCanvas();
+      if (localCanvas) {
+        canvas.width = localCanvas.width;
+        canvas.height = localCanvas.height;
+      }
+
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw local camera first
-      if (cameraRef.current?.getCanvas) {
-        const localCanvas = cameraRef.current.getCanvas();
-        if (localCanvas) {
-          ctx.drawImage(localCanvas, 0, 0, canvas.width, canvas.height);
-        }
+      if (localCanvas) {
+        ctx.drawImage(localCanvas, 0, 0);
       }
 
       // Draw remote streams on top (they will overlay)
       remoteVideosRef.current.forEach((video) => {
         if (video.readyState >= 2) { // HAVE_CURRENT_DATA
-          // Draw remote video semi-transparently
+          // Draw remote video semi-transparently, maintaining aspect ratio
           ctx.globalAlpha = 0.5;
           ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
           ctx.globalAlpha = 1.0;
@@ -316,8 +320,6 @@ function Room({ roomId }: RoomProps) {
             <Camera ref={cameraRef} userId={userId} isLocal={true} />
             <canvas 
               ref={compositeCanvasRef}
-              width={640}
-              height={480}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -325,7 +327,8 @@ function Room({ roomId }: RoomProps) {
                 width: '100%',
                 height: '100%',
                 pointerEvents: 'none',
-                zIndex: 5
+                zIndex: 5,
+                objectFit: 'contain'
               }}
             />
           </div>
