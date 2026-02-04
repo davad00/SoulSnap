@@ -82,7 +82,7 @@ canvas.camera-video {
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
-  z-index: 10;
+  z-index: 100;
 }
 
 .camera-toggle:hover {
@@ -101,7 +101,7 @@ canvas.camera-video {
   background: rgba(0, 0, 0, 0.8);
   padding: 0.75rem;
   border-radius: 8px;
-  z-index: 10;
+  z-index: 100;
   min-width: 200px;
 }
 
