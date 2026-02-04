@@ -1,0 +1,11 @@
+version: "2"
+authtoken: 2jbgokWnbOWYZEwNJIu61PSURQh_6W9SuKaFwCF3AGGDmBFgJ
+tunnels:
+  client:
+    proto: http
+    addr: 3000
+    host_header: rewrite
+  server:
+    proto: http
+    addr: 3001
+    host_header: rewrite

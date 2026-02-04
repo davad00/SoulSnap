@@ -1,0 +1,49 @@
+.room {
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.room-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #333;
+}
+
+.room-header h2 {
+  font-size: 1.5rem;
+}
+
+.user-count {
+  background: #333;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.camera-grid {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.composite-view {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  aspect-ratio: 4/3;
+}
+
+.room-controls {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.capture-btn {
+  font-size: 1.2rem;
+  padding: 1rem 3rem;
+}
