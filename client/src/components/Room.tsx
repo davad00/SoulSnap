@@ -107,25 +107,43 @@ function Room({ roomId }: RoomProps) {
     });
 
     newSocket.on('capture-now', async () => {
-      // Capture from the composite canvas instead of individual camera
-      if (compositeCanvasRef.current) {
-        try {
-          const canvas = compositeCanvasRef.current;
-          const imageData = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height);
-          
-          const frame: CapturedFrame = {
-            userId,
-            imageData,
-            foreground: imageData,
-            depthMap: undefined
-          };
-          
-          setCapturedFrames([frame]);
-          setEditMode(true);
-        } catch (err) {
-          console.error('Capture error:', err);
-          setError('Failed to capture photo. Please try again.');
+      try {
+        const frames: CapturedFrame[] = [];
+        
+        // Capture local user's camera
+        if (cameraRef.current?.captureFrame) {
+          const localFrame = await cameraRef.current.captureFrame();
+          if (localFrame) {
+            frames.push(localFrame);
+          }
         }
+        
+        // Capture remote users' video streams
+        remoteVideosRef.current.forEach((video, peerId) => {
+          if (video.readyState >= 2) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 640;
+            canvas.height = 480;
+            const ctx = canvas.getContext('2d')!;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            
+            frames.push({
+              userId: peerId,
+              imageData,
+              foreground: imageData,
+              depthMap: undefined
+            });
+          }
+        });
+        
+        if (frames.length > 0) {
+          setCapturedFrames(frames);
+          setEditMode(true);
+        }
+      } catch (err) {
+        console.error('Capture error:', err);
+        setError('Failed to capture photo. Please try again.');
       }
     });
 
