@@ -2,7 +2,7 @@
 FROM node:20-alpine AS client-builder
 WORKDIR /app/client
 COPY client/package*.json ./
-RUN npm ci
+RUN npm install
 COPY client/ ./
 RUN npm run build
 
@@ -10,7 +10,7 @@ RUN npm run build
 FROM node:20-alpine AS server-builder
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN npm ci
+RUN npm install
 COPY server/ ./
 RUN npm run build
 
