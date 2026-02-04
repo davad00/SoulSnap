@@ -17,8 +17,8 @@ const Camera = forwardRef(({ userId, isLocal }: CameraProps, ref) => {
   const [removeBackground, setRemoveBackground] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [edgeBlur, setEdgeBlur] = useState(3);
-  const selfieSegmentationRef = useRef<SelfieSegmentation | null>(null);
-  const cameraRef = useRef<MediaPipeCamera | null>(null);
+  const selfieSegmentationRef = useRef<any>(null);
+  const cameraRef = useRef<any>(null);
   const removeBackgroundRef = useRef(false);
   const edgeBlurRef = useRef(3);
 
@@ -59,33 +59,38 @@ const Camera = forwardRef(({ userId, isLocal }: CameraProps, ref) => {
   const initMediaPipe = async () => {
     if (!videoRef.current || !canvasRef.current) return;
 
-    const selfieSegmentation = new SelfieSegmentation({
-      locateFile: (file) => {
-        return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
-      }
-    });
-
-    selfieSegmentation.setOptions({
-      modelSelection: 1, // 0 = general, 1 = landscape (faster)
-      selfieMode: true,
-    });
-
-    selfieSegmentation.onResults(onResults);
-    selfieSegmentationRef.current = selfieSegmentation;
-
-    const camera = new MediaPipeCamera(videoRef.current, {
-      onFrame: async () => {
-        if (videoRef.current && selfieSegmentationRef.current) {
-          await selfieSegmentationRef.current.send({ image: videoRef.current });
+    try {
+      const selfieSegmentation = new (SelfieSegmentation as any)({
+        locateFile: (file: string) => {
+          return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
         }
-      },
-      width: 640,
-      height: 480
-    });
+      });
 
-    camera.start();
-    cameraRef.current = camera;
-    setIsLoading(false);
+      selfieSegmentation.setOptions({
+        modelSelection: 1,
+        selfieMode: true,
+      });
+
+      selfieSegmentation.onResults(onResults);
+      selfieSegmentationRef.current = selfieSegmentation;
+
+      const camera = new (MediaPipeCamera as any)(videoRef.current, {
+        onFrame: async () => {
+          if (videoRef.current && selfieSegmentationRef.current) {
+            await selfieSegmentationRef.current.send({ image: videoRef.current });
+          }
+        },
+        width: 640,
+        height: 480
+      });
+
+      camera.start();
+      cameraRef.current = camera;
+      setIsLoading(false);
+    } catch (err) {
+      console.error('Error initializing MediaPipe:', err);
+      setIsLoading(false);
+    }
   };
 
   const onResults = (results: any) => {
